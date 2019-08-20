@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2019 by MilenaV313 (http://jsbin.com/zovibap/13/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <title>Linz Altstadt NEW</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Monserrat, sans-serif;
+            font-size: 14px
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #panel {
+            background: rgba(255, 255, 255, 0.6);
+            /* rgba(34,45,50,1) */
+            width: 200px;
+            height: 100%;
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            border: 1 px solid rgba(0, 0, 0, 0.05);
+            /* border width, line type, color */
+            padding: 10px
+        }
+
+        .h3 {
+            /* background: rgba(20,30,34,1); */
+            width: 200px;
+            height: 4%;
+            position: absolute;
+            right: 0px;
+            padding: 10px
+        }
+
+        hr.new {
+            /* line below h4 */
+            border: 0.5px solid rgba(51, 51, 51, 0.15);
+            /* rgba(54, 169, 106) rgba(54,127,169,1) */
+            width: 200px;
+        }
+
+        hr.new1 {
+            /* blank space below label Vegetation Layer */
+            border: 0.2px solid rgb(255, 255, 255);
+            width: 10%;
+        }
+
+        hr.new2 {
+            /* blank space below label MRT Layer */
+            border: 0.2px solid rgb(255, 255, 255);
+            width: 10%;
+        }
+
+        hr.new3 {
+            /* blank space below label MRT buttons */
+            border: 1px solid rgb(255, 255, 255);
+            width: 10%;
+        }
+
+        .labelVeg {
+            display: inline-flex;
+            margin: 10px;
+        }
+
+        .labelMRT {
+            display: inline-flex;
+            margin: 10px;
+        }
+
+        /* Buttons for Vegetation Scenarios */
+        #menu {
+            position: relative;
+            background: rgb(255, 255, 255, 0);
+            /* border around menu */
+            /* z-index: 1; */
+            width: 120px;
+            top: 0px;
+            left: 42px;
+            padding: 0px;
+            cursor: pointer;
+        }
+
+        #menu a {
+            font-size: 13px;
+            color: white;
+            display: block;
+            /* Group the buttons below each other */
+            /* float: left; */
+            border-radius: 4px;
+            margin: 3px;
+            /* Add space between buttons */
+            padding: 0;
+            padding: 10px;
+            text-decoration: none;
+            /* border-bottom: 1px solid rgb(38, 117, 74, 0.5); */
+            background: #f02800;
+            /* rgba(54, 169, 106) */
+            text-align: center;
+        }
+
+        #menu a:last-child {
+            border: none;
+        }
+
+        #menu a:hover {
+            /* Add a background color on mouse-over */
+            background-color: #8a1000;
+            /* rgba(38, 117, 74) */
+            color: rgb(255, 255, 255, 0.5);
+        }
+
+        #menu a.active {
+            /* Style the current/active link */
+            background-color: #f02800;
+            /* rgba(54, 169, 106) */
+            color: rgb(255, 255, 255, 1);
+            /* text color */
+        }
+
+        #menu a.active:hover {
+            background: #8a1000;
+            /* rgba(38, 117, 74) */
+            color: rgb(255, 255, 255, 1);
+            /* text color */
+        }
+
+        /* Buttons for MRT Scenarios */
+        #MRT {
+            position: relative;
+            background: rgb(255, 255, 255, 0);
+            /* border around menu */
+            /* z-index: 1; */
+            width: 120px;
+            top: 0px;
+            left: 42px;
+            padding: 0px;
+            cursor: pointer;
+        }
+
+        #MRT b {
+            font-size: 13px;
+            color: white;
+            display: block;
+            /* Group the buttons below each other */
+            /* float: left; */
+            border-radius: 4px;
+            margin: 3px;
+            /* Add space between buttons */
+            padding: 0;
+            padding: 10px;
+            text-decoration: none;
+            /* border-bottom: 1px solid rgb(38, 117, 74, 0.5); */
+            background: #f02800;
+            text-align: center;
+        }
+
+        #MRT b:last-child {
+            border: none;
+        }
+
+        #MRT b:hover {
+            /* Add a background color on mouse-over */
+            background-color: #8a1000;
+            color: rgb(255, 255, 255, 0.5);
+        }
+
+        #MRT b.active {
+            /* Style the current/active link */
+            background-color: #f02800;
+            color: rgb(255, 255, 255, 1);
+            /* text color */
+        }
+
+        #MRT b.active:hover {
+            background: #8a1000;
+            color: rgb(255, 255, 255, 1);
+            /* text color */
+        }
+
+        /* MRT legend */
+        .sessionSLIDE {
+            margin-bottom: 20px;
+        }
+
+        .row {
+            height: 20px;
+            width: 100%;
+        }
+
+        .colors {
+            background: linear-gradient(to right, #072edf, #00eaff, #a6f958, #fef501, #ff7700, #8a1000);
+            margin-bottom: 5px;
+        }
+
+        .label {
+            width: 15%;
+            display: inline-block;
+            text-align: center;
+        }
+
+        /* From: Pitch toggle control for Mapbox GL JS — http://fuzzytolerance.info/blog/2017/01/30/Pitch-toggle-control-for-Mapbox-GL-JS/ */
+        .mapboxgl-ctrl-pitchtoggle-3d {
+            background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMCIgaGVpZ2h0PSIzMCI+ICAgIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkeT0iLjM1ZW0iIHN0eWxlPSJmb250LXNpemU6IDE0cHg7IGZvbnQtZmFtaWx5OiAnSGVsdmV0aWNhIE5ldWUnLEFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmOyBmb250LXdlaWdodDogYm9sZDsgdGV4dC1hbmNob3I6IG1pZGRsZTsiPjNEPC90ZXh0Pjwvc3ZnPg==);
+        }
+
+        .mapboxgl-ctrl-pitchtoggle-2d {
+            background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMCIgaGVpZ2h0PSIzMCI+ICAgIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkeT0iLjM1ZW0iIHN0eWxlPSJmb250LXNpemU6IDE0cHg7IGZvbnQtZmFtaWx5OiAnSGVsdmV0aWNhIE5ldWUnLEFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmOyBmb250LXdlaWdodDogYm9sZDsgdGV4dC1hbmNob3I6IG1pZGRsZTsiPjJEPC90ZXh0Pjwvc3ZnPg==);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Insert map -->
+    <div id='map'></div>
+    <!-- Insert panel -->
+    <div id='panel'>
+        <h3 style='color: rgba(51,51,51,1); margin: 8px; text-align: left'>&nbsp;MICROCLIMATE MAP</h3>
+        <h4 style='color: rgba(51,51,51,0.5); margin: 8px; text-align: left'>&nbsp;Linz, Austria</h4>
+        <hr class="new"> <!-- line below h4 -->
+        <div>
+            <!-- Add buttons to select bewteen BS and Scenario -->
+            <label class='labelVeg' style='color: rgba(51,51,51,1); font-weight: bold;'>VEGETATION LAYER</label>
+            <hr class='new1'> <!-- blank space below label Vegetation Layer -->
+            <nav id='menu'></nav> <!-- buttons -->
+        </div>
+        <div style='margin: 60px'></div> <!-- blank space below Vegetation butons -->
+        <div>
+            <!-- Add buttons to select bewteen BS and Scenario -->
+            <label class='labelMRT' style='color: rgba(51,51,51,1); font-weight: bold;'>MRT LAYER</label>
+            <hr class='new2'> <!-- blank space below label MRT Layer -->
+            <nav id='MRT'></nav> <!-- buttons -->
+        </div>
+        <hr class='new3'> <!-- blank space below label MRT Layer -->
+        <!-- Create MRT legend -->
+        <div class='session'>
+            <label class='labelVeg' style='color: rgba(51,51,51,1); font-weight: bold;'>Mean Radiant Temperature</label>
+            <div class='row colors'></div>
+            <div class='row labels'>
+                <div class='label'>23</div>
+                <div class='label'>27</div>
+                <div class='label'>31</div>
+                <div class='label'>35</div>
+                <div class='label'>39</div>
+                <div class='label'>43</div>
+            </div>
+        </div>
+        <!-- Create a slider bar -->
+        <div class='sessionSLIDE' id='sliderbar'>
+            <hr class='new3'> <!-- blank space below label MRT Layer -->
+            <h4 style='color: rgba(51,51,51,1); margin: 8px; text-align: left'>MRT VALUE: <label
+                    id='mrt-value'>-</label></h4>
+            <input id='slider' class='row' type='range' min='23' max='43' step='4' value='6' />
+        </div>
+        <!-- Explanation of the slider -->
+        <label style='color: rgba(51,51,51,0.8); font-weight: bold; font-style: italic; font-size: 12px;'>
+            Make sure that the respective MRT LAYER is turned on before using the MRT VALUE slider
+        </label>
+    </div> <!-- End of Panel -->
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoibWlsZW5hdiIsImEiOiJjanZkdzBueG0xdzJ5NDBwZmNyNHJoaTBpIn0.GH0voEfbSrA_0eqGoYX8eg';
+        var map = new mapboxgl.Map({
+            container: 'map', // container id
+            style: 'mapbox://styles/milenav/cjvqbt81j02081claewkemodm', // stylesheet location
+            center: [14.287, 48.305], // starting position [lng, lat]
+            zoom: 16, // starting zoom
+            minZoom: 16 // define min zoom
+        });
+
+        // Script for the vegetation buttons   
+        var toggleableLayerIds = ['BASE CASE', 'SCENARIO'];
+
+        for (var i = 0; i < toggleableLayerIds.length; i++) {
+            var id = toggleableLayerIds[i];
+
+            var link = document.createElement('a');
+            link.href = '#';
+            link.className = 'active';
+            link.textContent = id;
+
+            link.onclick = function (e) {
+                var clickedLayer = this.textContent;
+                e.preventDefault();
+                e.stopPropagation();
+
+                var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
+
+                if (visibility === 'visible') {
+                    map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+                    this.className = '';
+                } else {
+                    this.className = 'active';
+                    map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+                }
+            };
+
+            var layers = document.getElementById('menu');
+            layers.appendChild(link);
+        }
+
+        // Script for the MRT buttons   
+        var toggleableLayerIdsMRT = ['MRT BASE CASE', 'MRT SCENARIO'];
+
+        for (var k = 0; k < toggleableLayerIdsMRT.length; k++) {
+            var id2 = toggleableLayerIdsMRT[k];
+
+            var link = document.createElement('b');
+            link.href = '#';
+            link.className = 'active2';
+            link.textContent = id2;
+
+            link.onclick = function (f) {
+                var clickedLayer = this.textContent;
+                f.preventDefault();
+                f.stopPropagation();
+
+                var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
+
+                if (visibility === 'visible') {
+                    map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+                    this.className = '';
+                } else {
+                    this.className = 'active2';
+                    map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+                }
+            };
+
+            var layers = document.getElementById('MRT');
+            layers.appendChild(link);
+        }
+
+        // MRT slider new script
+        function newOpacity(value) {
+            var opacity = [
+                'interpolate',
+                ['linear'],
+                ['number', ['get', 'value']],
+                0, 0.0,
+                value - 0.1, 0,
+                value, 0.8,
+                100, 0.8
+            ]
+            return opacity
+        }
+
+        // map.setPaintProperty('MRT BASE CASE', 'circle-opacity', newOpacity)
+
+        // Slider function
+        var slider = document.getElementById('slider').addEventListener('input', function (g) {
+            var valueMRT = parseInt(g.target.value);
+            // update the map
+            map.setPaintProperty('MRT BASE CASE', 'circle-opacity', newOpacity(valueMRT));
+            map.setPaintProperty('MRT SCENARIO', 'circle-opacity', newOpacity(valueMRT));
+
+            // converting from 23 to 43 format
+            var filterValue = valueMRT % 43 ? valueMRT % 43 : 43;
+
+            // update text in the UI
+            document.getElementById('mrt-value').textContent = '>' + filterValue + '°C';
+        });
+
+        // Original ES6 Class—https://github.com/tobinbradley/mapbox-gl-pitch-toggle-control
+        // export default class PitchToggle {
+        class PitchToggle {
+            constructor({ bearing = -20, pitch = 70 }) {
+                this._bearing = bearing;
+                this._pitch = pitch
+            }
+
+            onAdd(map) {
+                this._map = map;
+                let _this = this;
+
+                this._btn = document.createElement("button");
+                this._btn.className = "mapboxgl-ctrl-icon mapboxgl-ctrl-pitchtoggle-3d";
+                this._btn.type = "button";
+                this._btn["aria-label"] = "Toggle Pitch";
+                this._btn.onclick = function () {
+                    if (map.getPitch() === 0) {
+                        let options = { pitch: _this._pitch, bearing: _this._bearing };
+                        if (_this._minpitchzoom && map.getZoom() > _this._minpitchzoom) {
+                            options.zoom = _this._minpitchzoom;
+                        }
+                        map.easeTo(options);
+                        _this._btn.className =
+                            "mapboxgl-ctrl-icon mapboxgl-ctrl-pitchtoggle-2d";
+                    } else {
+                        map.easeTo({ pitch: 0, bearing: 0 });
+                        _this._btn.className =
+                            "mapboxgl-ctrl-icon mapboxgl-ctrl-pitchtoggle-3d";
+                    }
+                };
+
+                this._container = document.createElement("div");
+                this._container.className = "mapboxgl-ctrl-group mapboxgl-ctrl";
+                this._container.appendChild(this._btn);
+
+                return this._container;
+            }
+
+            onRemove() {
+                this._container.parentNode.removeChild(this._container);
+                this._map = undefined;
+            }
+        }
+
+        /* Add Controls to the Map */
+        map.addControl(new mapboxgl.NavigationControl(), "top-left");
+        map.addControl(new PitchToggle({ minpitchzoom: 11 }), "top-left");
+
+    </script>
+
+</body>
+
+</html>
